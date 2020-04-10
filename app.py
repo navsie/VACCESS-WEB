@@ -8,13 +8,13 @@ app = Flask(__name__, static_url_path='')
 # This is temporary, slow code to serve static files.
 # In production would prefer nginx or apache handle this.
 #
-@app.route('/assets/<path:path>')
+@app.route('/static/assets/<path:path>')
 def send_assets(path):
     return send_from_directory('/opt/www/VACCESS/static/assets', path)
-@app.route('/bootstrap/<path:path>')
+@app.route('/static/bootstrap/<path:path>')
 def send_bootstrap(path):
     return send_from_directory('/opt/www/VACCESS/static/bootstrap', path)
-@app.route('/plugins/<path:path>')
+@app.route('/static/plugins/<path:path>')
 def send_plugins(path):
     return send_from_directory('/opt/www/VACCESS/static/plugins', path)
 #
