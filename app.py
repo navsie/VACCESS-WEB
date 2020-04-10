@@ -25,19 +25,19 @@ def send_plugins(path):
 
 @app.route("/")
 def index():
-	return render_template('index.html', name="BOB", title="Welcome to vaccess")
+	return render_template('index.html', title="Welcome to vaccess")
 
 @app.route("/chart")
 def chart():
-	return render_template('chart.html', name="BOB", title="Chart - vaccess")
+	return render_template('chart.html', title="List - vaccess")
 
 @app.route("/resources")
 def resources():
-	return render_template('resources.html', name="BOB", title="Resources - vaccess")
+	return render_template('resources.html', title="Insights - vaccess")
 
 @app.route("/stats")
 def stats():
-	return render_template('stats.html', name="BOB", title="Stats - vaccess")
+	return render_template('stats.html', title="Algorithm - vaccess")
 
 @app.route('/gmappage')
 def gmappage():

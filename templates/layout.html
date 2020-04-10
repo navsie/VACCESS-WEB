@@ -25,6 +25,16 @@
         overflow:hidden;
         padding:0;
     }
+    .navbar-logo-vaccess {
+        height:3em;
+    }
+    .text-center svg {
+        margin-left:50%;
+        left:-12px;
+    }
+    #sidebar .theme-brand li.theme-logo {
+        overflow:visible;
+    }
     </style>
     <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
     
@@ -38,7 +48,7 @@
 
             <ul class="navbar-item flex-row ml-auto">
 
-                <li class="nav-item dropdown user-profile-dropdown  order-lg-0 order-1">
+                <!--<li class="nav-item dropdown user-profile-dropdown  order-lg-0 order-1">
                     <a href="javascript:void(0);" class="nav-link dropdown-toggle user" id="userProfileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
                     </a>
@@ -73,7 +83,8 @@
                             </a>
                         </div>
                     </div>
-                </li>
+                </li>-->
+                <li class="nav-item"><img src="/assets/img/logo.png" class="navbar-logo-vaccess" alt="logo"></li>
             </ul>
         </header>
     </div>
@@ -96,7 +107,9 @@
                 <ul class="navbar-nav theme-brand flex-row  text-center">
                     <li class="nav-item theme-logo">
                         <a href="/">
-                            <img src="assets/img/logo.png" class="navbar-logo" alt="logo">
+                            <!--<img src="assets/img/logo.png" class="navbar-logo" alt="logo">-->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
+                              stroke="#e0e6ed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                         </a>
                     </li>
                     <li class="nav-item theme-text">
@@ -109,7 +122,7 @@
                         <a href="/chart" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <img src="assets/img/charts.svg" height="24" width="20">
-                                <span> Charts</span>
+                                <span> List</span>
                             </div>
                         </a>
                     </li>
@@ -118,7 +131,7 @@
                         <a href="/stats" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <img src="assets/img/stats.svg" height="24" width="20">
-                                <span> Stats</span>
+                                <span> Algorithm</span>
                             </div>
                         </a>
                     </li>
@@ -127,7 +140,7 @@
                         <a href="/resources" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <img src="assets/img/resources.svg" height="24" width="20">
-                                <span> Resources</span>
+                                <span> Insights</span>
                             </div>
                         </a>
                     </li>
