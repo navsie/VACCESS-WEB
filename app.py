@@ -25,5 +25,19 @@ def send_plugins(path):
 def index():
 	return render_template('index.html', name="BOB")
 
+@app.route("/chart")
+def chart():
+	return render_template('chart.html', name="BOB")
+
+@app.route("/resources")
+def resources():
+	return render_template('resources.html', name="BOB")
+
+@app.route("/stats")
+def stats():
+	return render_template('stats.html', name="BOB")			
+
+
+
 if __name__ == "__main__":
 	app.run(debug = True)
