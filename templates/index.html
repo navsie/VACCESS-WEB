@@ -1,21 +1,24 @@
 {% extends "layout.html" %}
 {% block content %}
 
-
         <!--  BEGIN CONTENT AREA  -->
         <div id="content" class="main-content">
             <div class="layout-px-spacing">
 
-                <!--<div class="page-header">
-                    <div class="page-title">
-                        <h3>Blank Page</h3>
+                <div class="row layout-top-spacing">
+                    <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+                        <div class="widget has-map">{% include 'gmap.html' %}</div>
                     </div>
-                </div>-->
-
-                <!-- CONTENT AREA -->
+                    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+                        <div class="widget">
+                            <h4>Welcome to <b>vaccess</b></h4>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi est metus, gravida sit amet eros at, egestas interdum urna. Nulla ornare leo non est imperdiet pretium. Phasellus suscipit lectus vel nulla sollicitudin sagittis. In a pharetra nisi. Vivamus nunc turpis, accumsan vitae augue sed, lacinia laoreet massa. Integer id pharetra arcu. Ut a velit nibh. Proin porta justo a nibh auctor, quis luctus velit ullamcorper. Pellentesque consequat tellus sed urna fringilla cursus. Nam at lacus nec massa auctor rhoncus non non libero. Morbi eget lobortis turpis. Duis eu vehicula leo.
+                            </p>
+                        </div>
+                    </div>
+                </div>
                
-               <div>&nbsp;</div>
-                {% include 'gmap.html' %}
 
             </div>
         </div>
