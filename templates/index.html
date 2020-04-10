@@ -6,22 +6,16 @@
         <div id="content" class="main-content">
             <div class="layout-px-spacing">
 
-                <div class="page-header">
+                <!--<div class="page-header">
                     <div class="page-title">
                         <h3>Blank Page</h3>
                     </div>
-                </div>
+                </div>-->
 
                 <!-- CONTENT AREA -->
                
-               <!-- (pages can say "hello world" for now)
-                 or here we use flask's Jinja2 template rendering code to add a little condional statement -->
-                {% if name %}
-                  <h1>Hello {{ name }}!</h1>
-                {% else %}
-                  <h1>Hello, World!</h1>
-                {% endif %}
-                <!-- CONTENT AREA -->
+               <div>&nbsp;</div>
+                {% include 'gmap.html' %}
 
             </div>
         </div>

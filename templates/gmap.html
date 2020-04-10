@@ -1,0 +1,364 @@
+<style>
+#map-canvas {
+    min-height:80vh;
+}
+</style>
+<div class="heatmap" id="map-canvas"></div>
+
+
+
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyB6meWiuf7Pkr_nnqUqbmWTEW0zKBIPH98"></script>
+
+<script>
+/*
+ * heatmap.js v2.0.2 | JavaScript Heatmap Library
+ *
+ * Copyright 2008-2016 Patrick Wied <heatmapjs@patrick-wied.at> - All rights reserved.
+ * Dual licensed under MIT and Beerware license 
+ *
+ * :: 2016-02-04 21:25
+ */
+(function(a,b,c){if(typeof module!=="undefined"&&module.exports){module.exports=c()}else if(typeof define==="function"&&define.amd){define(c)}else{b[a]=c()}})("h337",this,function(){var a={defaultRadius:40,defaultRenderer:"canvas2d",defaultGradient:{.25:"rgb(0,0,255)",.55:"rgb(0,255,0)",.85:"yellow",1:"rgb(255,0,0)"},defaultMaxOpacity:1,defaultMinOpacity:0,defaultBlur:.85,defaultXField:"x",defaultYField:"y",defaultValueField:"value",plugins:{}};var b=function h(){var b=function d(a){this._coordinator={};this._data=[];this._radi=[];this._min=0;this._max=1;this._xField=a["xField"]||a.defaultXField;this._yField=a["yField"]||a.defaultYField;this._valueField=a["valueField"]||a.defaultValueField;if(a["radius"]){this._cfgRadius=a["radius"]}};var c=a.defaultRadius;b.prototype={_organiseData:function(a,b){var d=a[this._xField];var e=a[this._yField];var f=this._radi;var g=this._data;var h=this._max;var i=this._min;var j=a[this._valueField]||1;var k=a.radius||this._cfgRadius||c;if(!g[d]){g[d]=[];f[d]=[]}if(!g[d][e]){g[d][e]=j;f[d][e]=k}else{g[d][e]+=j}if(g[d][e]>h){if(!b){this._max=g[d][e]}else{this.setDataMax(g[d][e])}return false}else{return{x:d,y:e,value:j,radius:k,min:i,max:h}}},_unOrganizeData:function(){var a=[];var b=this._data;var c=this._radi;for(var d in b){for(var e in b[d]){a.push({x:d,y:e,radius:c[d][e],value:b[d][e]})}}return{min:this._min,max:this._max,data:a}},_onExtremaChange:function(){this._coordinator.emit("extremachange",{min:this._min,max:this._max})},addData:function(){if(arguments[0].length>0){var a=arguments[0];var b=a.length;while(b--){this.addData.call(this,a[b])}}else{var c=this._organiseData(arguments[0],true);if(c){this._coordinator.emit("renderpartial",{min:this._min,max:this._max,data:[c]})}}return this},setData:function(a){var b=a.data;var c=b.length;this._data=[];this._radi=[];for(var d=0;d<c;d++){this._organiseData(b[d],false)}this._max=a.max;this._min=a.min||0;this._onExtremaChange();this._coordinator.emit("renderall",this._getInternalData());return this},removeData:function(){},setDataMax:function(a){this._max=a;this._onExtremaChange();this._coordinator.emit("renderall",this._getInternalData());return this},setDataMin:function(a){this._min=a;this._onExtremaChange();this._coordinator.emit("renderall",this._getInternalData());return this},setCoordinator:function(a){this._coordinator=a},_getInternalData:function(){return{max:this._max,min:this._min,data:this._data,radi:this._radi}},getData:function(){return this._unOrganizeData()}};return b}();var c=function i(){var a=function(a){var b=a.gradient||a.defaultGradient;var c=document.createElement("canvas");var d=c.getContext("2d");c.width=256;c.height=1;var e=d.createLinearGradient(0,0,256,1);for(var f in b){e.addColorStop(f,b[f])}d.fillStyle=e;d.fillRect(0,0,256,1);return d.getImageData(0,0,256,1).data};var b=function(a,b){var c=document.createElement("canvas");var d=c.getContext("2d");var e=a;var f=a;c.width=c.height=a*2;if(b==1){d.beginPath();d.arc(e,f,a,0,2*Math.PI,false);d.fillStyle="rgba(0,0,0,1)";d.fill()}else{var g=d.createRadialGradient(e,f,a*b,e,f,a);g.addColorStop(0,"rgba(0,0,0,1)");g.addColorStop(1,"rgba(0,0,0,0)");d.fillStyle=g;d.fillRect(0,0,2*a,2*a)}return c};var c=function(a){var b=[];var c=a.min;var d=a.max;var e=a.radi;var a=a.data;var f=Object.keys(a);var g=f.length;while(g--){var h=f[g];var i=Object.keys(a[h]);var j=i.length;while(j--){var k=i[j];var l=a[h][k];var m=e[h][k];b.push({x:h,y:k,value:l,radius:m})}}return{min:c,max:d,data:b}};function d(b){var c=b.container;var d=this.shadowCanvas=document.createElement("canvas");var e=this.canvas=b.canvas||document.createElement("canvas");var f=this._renderBoundaries=[1e4,1e4,0,0];var g=getComputedStyle(b.container)||{};e.className="heatmap-canvas";this._width=e.width=d.width=b.width||+g.width.replace(/px/,"");this._height=e.height=d.height=b.height||+g.height.replace(/px/,"");this.shadowCtx=d.getContext("2d");this.ctx=e.getContext("2d");e.style.cssText=d.style.cssText="position:absolute;left:0;top:0;";c.style.position="relative";c.appendChild(e);this._palette=a(b);this._templates={};this._setStyles(b)}d.prototype={renderPartial:function(a){if(a.data.length>0){this._drawAlpha(a);this._colorize()}},renderAll:function(a){this._clear();if(a.data.length>0){this._drawAlpha(c(a));this._colorize()}},_updateGradient:function(b){this._palette=a(b)},updateConfig:function(a){if(a["gradient"]){this._updateGradient(a)}this._setStyles(a)},setDimensions:function(a,b){this._width=a;this._height=b;this.canvas.width=this.shadowCanvas.width=a;this.canvas.height=this.shadowCanvas.height=b},_clear:function(){this.shadowCtx.clearRect(0,0,this._width,this._height);this.ctx.clearRect(0,0,this._width,this._height)},_setStyles:function(a){this._blur=a.blur==0?0:a.blur||a.defaultBlur;if(a.backgroundColor){this.canvas.style.backgroundColor=a.backgroundColor}this._width=this.canvas.width=this.shadowCanvas.width=a.width||this._width;this._height=this.canvas.height=this.shadowCanvas.height=a.height||this._height;this._opacity=(a.opacity||0)*255;this._maxOpacity=(a.maxOpacity||a.defaultMaxOpacity)*255;this._minOpacity=(a.minOpacity||a.defaultMinOpacity)*255;this._useGradientOpacity=!!a.useGradientOpacity},_drawAlpha:function(a){var c=this._min=a.min;var d=this._max=a.max;var a=a.data||[];var e=a.length;var f=1-this._blur;while(e--){var g=a[e];var h=g.x;var i=g.y;var j=g.radius;var k=Math.min(g.value,d);var l=h-j;var m=i-j;var n=this.shadowCtx;var o;if(!this._templates[j]){this._templates[j]=o=b(j,f)}else{o=this._templates[j]}var p=(k-c)/(d-c);n.globalAlpha=p<.01?.01:p;n.drawImage(o,l,m);if(l<this._renderBoundaries[0]){this._renderBoundaries[0]=l}if(m<this._renderBoundaries[1]){this._renderBoundaries[1]=m}if(l+2*j>this._renderBoundaries[2]){this._renderBoundaries[2]=l+2*j}if(m+2*j>this._renderBoundaries[3]){this._renderBoundaries[3]=m+2*j}}},_colorize:function(){var a=this._renderBoundaries[0];var b=this._renderBoundaries[1];var c=this._renderBoundaries[2]-a;var d=this._renderBoundaries[3]-b;var e=this._width;var f=this._height;var g=this._opacity;var h=this._maxOpacity;var i=this._minOpacity;var j=this._useGradientOpacity;if(a<0){a=0}if(b<0){b=0}if(a+c>e){c=e-a}if(b+d>f){d=f-b}var k=this.shadowCtx.getImageData(a,b,c,d);var l=k.data;var m=l.length;var n=this._palette;for(var o=3;o<m;o+=4){var p=l[o];var q=p*4;if(!q){continue}var r;if(g>0){r=g}else{if(p<h){if(p<i){r=i}else{r=p}}else{r=h}}l[o-3]=n[q];l[o-2]=n[q+1];l[o-1]=n[q+2];l[o]=j?n[q+3]:r}k.data=l;this.ctx.putImageData(k,a,b);this._renderBoundaries=[1e3,1e3,0,0]},getValueAt:function(a){var b;var c=this.shadowCtx;var d=c.getImageData(a.x,a.y,1,1);var e=d.data[3];var f=this._max;var g=this._min;b=Math.abs(f-g)*(e/255)>>0;return b},getDataURL:function(){return this.canvas.toDataURL()}};return d}();var d=function j(){var b=false;if(a["defaultRenderer"]==="canvas2d"){b=c}return b}();var e={merge:function(){var a={};var b=arguments.length;for(var c=0;c<b;c++){var d=arguments[c];for(var e in d){a[e]=d[e]}}return a}};var f=function k(){var c=function h(){function a(){this.cStore={}}a.prototype={on:function(a,b,c){var d=this.cStore;if(!d[a]){d[a]=[]}d[a].push(function(a){return b.call(c,a)})},emit:function(a,b){var c=this.cStore;if(c[a]){var d=c[a].length;for(var e=0;e<d;e++){var f=c[a][e];f(b)}}}};return a}();var f=function(a){var b=a._renderer;var c=a._coordinator;var d=a._store;c.on("renderpartial",b.renderPartial,b);c.on("renderall",b.renderAll,b);c.on("extremachange",function(b){a._config.onExtremaChange&&a._config.onExtremaChange({min:b.min,max:b.max,gradient:a._config["gradient"]||a._config["defaultGradient"]})});d.setCoordinator(c)};function g(){var g=this._config=e.merge(a,arguments[0]||{});this._coordinator=new c;if(g["plugin"]){var h=g["plugin"];if(!a.plugins[h]){throw new Error("Plugin '"+h+"' not found. Maybe it was not registered.")}else{var i=a.plugins[h];this._renderer=new i.renderer(g);this._store=new i.store(g)}}else{this._renderer=new d(g);this._store=new b(g)}f(this)}g.prototype={addData:function(){this._store.addData.apply(this._store,arguments);return this},removeData:function(){this._store.removeData&&this._store.removeData.apply(this._store,arguments);return this},setData:function(){this._store.setData.apply(this._store,arguments);return this},setDataMax:function(){this._store.setDataMax.apply(this._store,arguments);return this},setDataMin:function(){this._store.setDataMin.apply(this._store,arguments);return this},configure:function(a){this._config=e.merge(this._config,a);this._renderer.updateConfig(this._config);this._coordinator.emit("renderall",this._store._getInternalData());return this},repaint:function(){this._coordinator.emit("renderall",this._store._getInternalData());return this},getData:function(){return this._store.getData()},getDataURL:function(){return this._renderer.getDataURL()},getValueAt:function(a){if(this._store.getValueAt){return this._store.getValueAt(a)}else if(this._renderer.getValueAt){return this._renderer.getValueAt(a)}else{return null}}};return g}();var g={create:function(a){return new f(a)},register:function(b,c){a.plugins[b]=c}};return g});
+</script>
+
+
+
+
+
+
+<script>
+/*
+* heatmap.js Google Maps Overlay
+*
+* Copyright (c) 2008-2016, Patrick Wied (https://www.patrick-wied.at)
+* Dual-licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
+* and the Beerware (http://en.wikipedia.org/wiki/Beerware) license.
+*/
+;(function (name, context, factory) {
+  // Supports UMD. AMD, CommonJS/Node.js and browser context
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = factory(
+      require('heatmap.js'),
+      require('google-maps')
+    );
+  } else if (typeof define === "function" && define.amd) {
+    define(['heatmap.js', 'google-maps'], factory);
+  } else {
+    // browser globals
+    if (typeof window.h337 === 'undefined') {
+      throw new Error('heatmap.js must be loaded before the gmaps heatmap plugin');
+    }
+    if (typeof window.google === 'undefined') {
+      throw new Error('Google Maps must be loaded before the gmaps heatmap plugin');
+    }
+    context[name] = factory(window.h337, window.google.maps);
+  }
+
+})("HeatmapOverlay", this, function(h337, gmaps) {
+  'use strict';
+
+  var HeatmapOverlay = function(map, cfg){ 
+    this.setMap(map);
+    this.initialize(cfg || {});
+  };
+
+  HeatmapOverlay.prototype = new gmaps.OverlayView();
+
+  HeatmapOverlay.CSS_TRANSFORM = (function() {
+    var div = document.createElement('div');
+    var props = [
+      'transform',
+      'WebkitTransform',
+      'MozTransform',
+      'OTransform',
+      'msTransform'
+    ];
+
+    for (var i = 0; i < props.length; i++) {
+      var prop = props[i];
+      if (div.style[prop] !== undefined) {
+        return prop;
+      }
+    }
+
+    return props[0];
+  })();
+
+  HeatmapOverlay.prototype.initialize = function(cfg) {
+    this.cfg = cfg;
+    
+    var map = this.map = this.getMap();
+    var container = this.container = document.createElement('div');
+    var mapDiv = map.getDiv();
+    var width = this.width = mapDiv.clientWidth;
+    var height = this.height = mapDiv.clientHeight;
+
+    container.style.cssText = 'width:' + width +'px;height:' + height+'px;';
+
+    this.data = [];
+    this.max = 1;
+    this.min = 0;
+
+    cfg.container = container;
+  };
+
+  HeatmapOverlay.prototype.onAdd = function(){
+    var that = this;
+
+    this.getPanes().overlayLayer.appendChild(this.container);
+
+
+    this.changeHandler = gmaps.event.addListener(
+      this.map,
+      'bounds_changed',
+      function() { return that.draw(); }
+    );
+   
+    if (!this.heatmap) {
+      this.heatmap = h337.create(this.cfg);
+    }
+    this.draw();
+  };
+
+  HeatmapOverlay.prototype.onRemove = function() { 
+    if (!this.map) { return; }
+
+    this.map = null;
+
+    this.container.parentElement.removeChild(this.container);
+
+    if (this.changeHandler) {
+      gmaps.event.removeListener(this.changeHandler);
+      this.changeHandler = null;
+    }
+
+  };
+
+  HeatmapOverlay.prototype.draw = function() {
+    if (!this.map) { return; }
+
+    var bounds = this.map.getBounds();
+
+    var topLeft = new gmaps.LatLng(
+      bounds.getNorthEast().lat(),
+      bounds.getSouthWest().lng()
+    );
+
+    var projection = this.getProjection();
+    var point = projection.fromLatLngToDivPixel(topLeft);
+
+    this.container.style[HeatmapOverlay.CSS_TRANSFORM] = 'translate(' +
+        Math.round(point.x) + 'px,' +
+        Math.round(point.y) + 'px)';
+
+    this.update();
+  };
+
+  HeatmapOverlay.prototype.resize = function() {
+
+    if (!this.map){ return; }
+
+    var div = this.map.getDiv(),
+      width = div.clientWidth,
+      height = div.clientHeight;
+
+    if (width == this.width && height == this.height){ return; }
+
+    this.width = width;
+    this.height = height;
+
+    // update heatmap dimensions
+    this.heatmap._renderer.setDimensions(width, height);
+    // then redraw all datapoints with update
+    this.update();
+  };
+
+  HeatmapOverlay.prototype.update = function() {
+    var projection = this.getProjection(),
+      zoom, scale, bounds, topLeft;
+    var generatedData = { max: this.max, min: this.min, data: [] };
+
+    if (!projection){ return; }
+
+    bounds = this.map.getBounds();
+
+    topLeft = new gmaps.LatLng(
+      bounds.getNorthEast().lat(),
+      bounds.getSouthWest().lng()
+    );
+
+    zoom = this.map.getZoom();
+    scale = Math.pow(2, zoom);
+
+    this.resize();
+
+    if (this.data.length == 0) {
+      if (this.heatmap) {
+        this.heatmap.setData(generatedData);
+      }
+      return;
+    }
+
+
+    var latLngPoints = [];
+    // iterate through data 
+    var len = this.data.length;
+    var layerProjection = this.getProjection();
+    var layerOffset = layerProjection.fromLatLngToDivPixel(topLeft);
+    var radiusMultiplier = this.cfg.scaleRadius ? scale : 1;
+    var localMax = 0;
+    var localMin = 0;
+    var valueField = this.cfg.valueField;
+
+
+    while (len--) {
+      var entry = this.data[len];
+      var value = entry[valueField];
+      var latlng = entry.latlng;
+
+
+      // we don't wanna render points that are not even on the map ;-)
+      if (!bounds.contains(latlng)) {
+        continue;
+      }
+      // local max is the maximum within current bounds
+      localMax = Math.max(value, localMax);
+      localMin = Math.min(value, localMin);
+
+      var point = layerProjection.fromLatLngToDivPixel(latlng);
+      var latlngPoint = { x: Math.round(point.x - layerOffset.x), y: Math.round(point.y - layerOffset.y) };
+      latlngPoint[valueField] = value;
+
+      var radius;
+
+      if (entry.radius) {
+        radius = entry.radius * radiusMultiplier;
+      } else {
+        radius = (this.cfg.radius || 2) * radiusMultiplier;
+      }
+      latlngPoint.radius = radius;
+      latLngPoints.push(latlngPoint);
+    }
+    if (this.cfg.useLocalExtrema) {
+      generatedData.max = localMax;
+      generatedData.min = localMin;
+    }
+
+    generatedData.data = latLngPoints;
+
+    this.heatmap.setData(generatedData);
+
+  };
+
+  HeatmapOverlay.prototype.setData = function(data) { 
+    this.max = data.max;
+    this.min = data.min;
+
+    var latField = this.cfg.latField || 'lat';
+    var lngField = this.cfg.lngField || 'lng';
+    var valueField = this.cfg.valueField || 'value';
+
+    // transform data to latlngs
+    var data = data.data;
+    var len = data.length;
+    var d = [];
+
+    while (len--) {
+      var entry = data[len];
+      var latlng = new gmaps.LatLng(entry[latField], entry[lngField]);
+      var dataObj = { latlng: latlng };
+      dataObj[valueField] = entry[valueField];
+      if (entry.radius) {
+        dataObj.radius = entry.radius;
+      }
+      d.push(dataObj);
+    }
+    this.data = d;
+    this.update();
+  };
+  // experimential. not ready yet.
+  HeatmapOverlay.prototype.addData = function(pointOrArray) {
+    if (pointOrArray.length > 0) {
+        var len = pointOrArray.length;
+        while(len--) {
+          this.addData(pointOrArray[len]);
+        }
+      } else {
+        var latField = this.cfg.latField || 'lat';
+        var lngField = this.cfg.lngField || 'lng';
+        var valueField = this.cfg.valueField || 'value';
+        var entry = pointOrArray;
+        var latlng = new gmaps.LatLng(entry[latField], entry[lngField]);
+        var dataObj = { latlng: latlng };
+        
+        dataObj[valueField] = entry[valueField];
+        if (entry.radius) {
+          dataObj.radius = entry.radius;
+        }
+        this.max = Math.max(this.max, dataObj[valueField]);
+        this.min = Math.min(this.min, dataObj[valueField]);
+        this.data.push(dataObj);
+        this.update();
+      }
+  };
+
+  return HeatmapOverlay;
+
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <script>
+    window.onload = function() {
+
+        // map center
+        var myLatlng = new google.maps.LatLng(36.7783, -119.4179);
+        // map options,
+        var myOptions = {
+          zoom: 5,
+          center: myLatlng
+        };
+        // standard map
+        map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+        // heatmap layer
+        heatmap = new HeatmapOverlay(map,
+          {
+            // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+            "radius": 2,
+            "maxOpacity": 1,
+            // scales the radius based on map zoom
+            "scaleRadius": true,
+            // if set to false the heatmap uses the global maximum for colorization
+            // if activated: uses the data maximum within the current map boundaries
+            //   (there will always be a red spot with useLocalExtremas true)
+            "useLocalExtrema": true,
+            // which field name in your data represents the latitude - default "lat"
+            latField: 'lat',
+            // which field name in your data represents the longitude - default "lng"
+            lngField: 'lng',
+            // which field name in your data represents the data value - default "value"
+            valueField: 'count'
+          }
+        );
+
+        var testData = {
+          max: 8,
+          data: [{lat: 24.6408, lng:46.7728, count: 3},{lat: 50.75, lng:-1.55, count: 1},{lat: 52.6333, lng:1.75, count: 1},{lat: 48.15, lng:9.4667, count: 1},{lat: 52.35, lng:4.9167, count: 2},{lat: 60.8, lng:11.1, count: 1},{lat: 43.561, lng:-116.214, count: 1},{lat: 47.5036, lng:-94.685, count: 1},{lat: 42.1818, lng:-71.1962, count: 1},{lat: 42.0477, lng:-74.1227, count: 1},{lat: 40.0326, lng:-75.719, count: 1},{lat: 40.7128, lng:-73.2962, count: 2},{lat: 27.9003, lng:-82.3024, count: 1},{lat: 38.2085, lng:-85.6918, count: 1},{lat: 46.8159, lng:-100.706, count: 1},{lat: 30.5449, lng:-90.8083, count: 1},{lat: 44.735, lng:-89.61, count: 1},{lat: 41.4201, lng:-75.6485, count: 2},{lat: 39.4209, lng:-74.4977, count: 1},{lat: 39.7437, lng:-104.979, count: 1},{lat: 39.5593, lng:-105.006, count: 1},{lat: 45.2673, lng:-93.0196, count: 1},{lat: 41.1215, lng:-89.4635, count: 1},{lat: 43.4314, lng:-83.9784, count: 1},{lat: 43.7279, lng:-86.284, count: 1},{lat: 40.7168, lng:-73.9861, count: 1},{lat: 47.7294, lng:-116.757, count: 1},{lat: 47.7294, lng:-116.757, count: 2},{lat: 35.5498, lng:-118.917, count: 1},{lat: 34.1568, lng:-118.523, count: 1},{lat: 39.501, lng:-87.3919, count: 3},{lat: 33.5586, lng:-112.095, count: 1},{lat: 38.757, lng:-77.1487, count: 1},{lat: 33.223, lng:-117.107, count: 1},{lat: 30.2316, lng:-85.502, count: 1},{lat: 39.1703, lng:-75.5456, count: 8},{lat: 30.0041, lng:-95.2984, count: 2},{lat: 29.7755, lng:-95.4152, count: 1},{lat: 41.8014, lng:-87.6005, count: 1},{lat: 37.8754, lng:-121.687, count: 7},{lat: 38.4493, lng:-122.709, count: 1},{lat: 40.5494, lng:-89.6252, count: 1},{lat: 42.6105, lng:-71.2306, count: 1},{lat: 40.0973, lng:-85.671, count: 1},{lat: 40.3987, lng:-86.8642, count: 1},{lat: 40.4224, lng:-86.8031, count: 4},{lat: 47.2166, lng:-122.451, count: 1},{lat: 32.2369, lng:-110.956, count: 1},{lat: 41.3969, lng:-87.3274, count: 2},{lat: 41.7364, lng:-89.7043, count: 2},{lat: 42.3425, lng:-71.0677, count: 1},{lat: 33.8042, lng:-83.8893, count: 1},{lat: 36.6859, lng:-121.629, count: 2},{lat: 41.0957, lng:-80.5052, count: 1},{lat: 46.8841, lng:-123.995, count: 1},{lat: 40.2851, lng:-75.9523, count: 2},{lat: 42.4235, lng:-85.3992, count: 1},{lat: 39.7437, lng:-104.979, count: 2},{lat: 25.6586, lng:-80.3568, count: 7},{lat: 33.0975, lng:-80.1753, count: 1},{lat: 25.7615, lng:-80.2939, count: 1},{lat: 26.3739, lng:-80.1468, count: 1},{lat: 37.6454, lng:-84.8171, count: 1},{lat: 34.2321, lng:-77.8835, count: 1},{lat: 34.6774, lng:-82.928, count: 1},{lat: 39.9744, lng:-86.0779, count: 1},{lat: 35.6784, lng:-97.4944, count: 2},{lat: 33.5547, lng:-84.1872, count: 1},{lat: 27.2498, lng:-80.3797, count: 1},{lat: 41.4789, lng:-81.6473, count: 1},{lat: 41.813, lng:-87.7134, count: 1},{lat: 41.8917, lng:-87.9359, count: 1},{lat: 35.0911, lng:-89.651, count: 1},{lat: 32.6102, lng:-117.03, count: 1},{lat: 41.758, lng:-72.7444, count: 1},{lat: 39.8062, lng:-86.1407, count: 1},{lat: 41.872, lng:-88.1662, count: 1},{lat: 34.1404, lng:-81.3369, count: 1},{lat: 46.15, lng:-60.1667, count: 1},{lat: 36.0679, lng:-86.7194, count: 1},{lat: 43.45, lng:-80.5, count: 1},{lat: 44.3833, lng:-79.7, count: 1},{lat: 45.4167, lng:-75.7, count: 2},{lat: 43.75, lng:-79.2, count: 2},{lat: 45.2667, lng:-66.0667, count: 3},{lat: 42.9833, lng:-81.25, count: 2},{lat: 44.25, lng:-79.4667, count: 3},{lat: 45.2667, lng:-66.0667, count: 2},{lat: 34.3667, lng:-118.478, count: 3},{lat: 42.734, lng:-87.8211, count: 1},{lat: 39.9738, lng:-86.1765, count: 1},{lat: 33.7438, lng:-117.866, count: 1},{lat: 37.5741, lng:-122.321, count: 1},{lat: 42.2843, lng:-85.2293, count: 1},{lat: 34.6574, lng:-92.5295, count: 1},{lat: 41.4881, lng:-87.4424, count: 1},{lat: 25.72, lng:-80.2707, count: 1},{lat: 34.5873, lng:-118.245, count: 1},{lat: 35.8278, lng:-78.6421, count: 1}]
+        };
+
+        heatmap.setData(testData);
+
+
+    };
+  </script>
