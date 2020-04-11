@@ -267,13 +267,13 @@ try {
       },
       series: [{
           name: 'Correlation',
-          data: [58, 44, 55, 57, 56]
+          data: [58, 44, 55]
       }, {
-          name: 'Certainty',
-          data: [91, 76, 85, 101, 98]
+          name: 'Data',
+          data: [91, 76, 85]
       }],
       xaxis: {
-          categories: ['Supply', 'Age', 'Physician Ratio', 'Demographic', 'Economic'],
+          categories: ['Confirmed COVID-19 Cases/County', 'Active Primary Care Physicians/County', 'Population Density/County'],
       },
       fill: {
         type: 'gradient',

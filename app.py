@@ -1,6 +1,6 @@
 from flask import Flask, request, send_from_directory, render_template
-import gmaps
-import gmaps.datasets
+import json
+import requests
 
 app = Flask(__name__, static_url_path='')
 
@@ -25,11 +25,13 @@ def send_plugins(path):
 
 @app.route("/")
 def index():
-	return render_template('index.html', title="Welcome to vaccess")
+	r = requests.get('https://vaccess-service.herokuapp.com/api/getStateRiskLevel?state=ca')
+	return render_template('index.html', title="Welcome to vaccess", r=r.json())
 
 @app.route("/chart")
 def chart():
-	return render_template('chart.html', title="List - vaccess")
+	r = requests.get('https://vaccess-service.herokuapp.com/api/getStateRiskLevel?state=ca')
+	return render_template('chart.html', title="List - vaccess", r=r.json())
 
 @app.route("/resources")
 def resources():

@@ -1,20 +1,50 @@
 {% extends "layout.html" %}
 {% block content %}
 
+<script>
+// read r (request from back end)
+Counties = {{r|tojson}};
+//console.log({{r|tojson}});
+
+_heatmap_max = 10;
+
+
+
+for ( var i=0; i<Counties.length; i++) {
+    var County = Counties[i];
+    County.count = County.percentOver65 - 0;
+    // County.count = County.riskWeight - 0; // would prefer to use riskWeight but not working right now so commented out
+    if ( County.count > _heatmap_max ) {
+        _heatmap_max = County.count;
+    }
+    Counties[i] = County;
+}
+//console.log('COUNTIES', Counties)
+</script>
+
+
         <!--  BEGIN CONTENT AREA  -->
         <div id="content" class="main-content">
             <div class="layout-px-spacing">
 
                 <div class="row layout-top-spacing">
-                    <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+                    <div class="col-xl-10 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
                         <div class="widget has-map">{% include 'gmap.html' %}</div>
                     </div>
-                    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+                    <div class="col-xl-2 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
                         <div class="widget">
-                            <h4>Welcome to <b>vaccess</b></h4>
+                            <h4>Welcome to <b>VACCESS</b></h4>
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi est metus, gravida sit amet eros at, egestas interdum urna. Nulla ornare leo non est imperdiet pretium. Phasellus suscipit lectus vel nulla sollicitudin sagittis. In a pharetra nisi. Vivamus nunc turpis, accumsan vitae augue sed, lacinia laoreet massa. Integer id pharetra arcu. Ut a velit nibh. Proin porta justo a nibh auctor, quis luctus velit ullamcorper. Pellentesque consequat tellus sed urna fringilla cursus. Nam at lacus nec massa auctor rhoncus non non libero. Morbi eget lobortis turpis. Duis eu vehicula leo.
+                                VACCESS uses a proprietary combination of historic and real-time population health data to offer insights that will drive critical logistics. VACCESS will support distribution efforts of manufacturers, governments, and the WHO by identifying geographical clusters.
                             </p>
+                            <!--<p>
+                                Our MVP application reads live data informed by our proprietary algorithm that uses a geographic heat map, sorted lists and additional components to display guided analytics to help county providers make better distribution decisions. County providers can use the application to prioritize vaccine distribution efforts to reach critical populations, with a current focus on the state of California. 
+                            </p-->
+                            <!--
+                            <p>
+                                Since primary care doctors are on the front lines in the war, we are prioritizing the vaccine distributions to them first. However, our vision is to prioritize the most vulnerable in any given moment. Our goal is to leverage big data to prescribe future distribution efforts and scale up at a global level to allocate stocks to countries around the world. With VACCESS, we will help prevent future pandemics. With VACCESS, we will help save lives
+                            </p>
+                            -->
                         </div>
                     </div>
                 </div>
